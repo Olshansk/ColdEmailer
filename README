@@ -1,0 +1,8 @@
+- new_companies gets renamed to old_companies to avoid mistakenly sending the same email to the same people
+- example format for "new_companies" (1 company):
+  First1 Last1 <email1> First2 Last2 <email2> First3 Last3 <email3>
+- Need to do 
+- LOTS of cleanup left to do (clone is disgusting, pretty much hacked together)
+- Need to generalize to a general number of emails, times, etc...
+- Need a way to read data stored in the pickle file and see the state of emails
+- Add an example cronjob in the README
