@@ -1,3 +1,5 @@
+** Work in Progress. Very rough first draft. **
+
 - new_companies gets renamed to old_companies to avoid mistakenly sending the same email to the same people
 - example format for "new_companies" (1 company):
   First1 Last1 <email1> First2 Last2 <email2> First3 Last3 <email3>
