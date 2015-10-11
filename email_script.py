@@ -51,30 +51,33 @@ class CompanyState:
         self.people = people
         self.company_state = NO_EMAIL
         self.last_updated = time.time()
+        self.first_thread_ids = []
+        self.second_thread_ids = []
+        self.third_thread_ids = []
 
     def increment_company_state(self, service):
         if (self.company_state == NO_EMAIL):
             thread_ids = send_first_email(service, self.people)
-            self.thread_ids = thread_ids
+            self.first_thread_ids.extend(thread_ids)
             self.company_state = FIRST_EMAIL_SENT
         elif self.company_state == FIRST_EMAIL_SENT:
-            if self.should_send_followup_email(service):
+            if self.should_send_followup_email(service, self.first_thread_ids):
                 if self.did_enough_time_pass():
                     thread_id = send_second_email(service, self.people)
-                    self.thread_ids.append(thread_id)
+                    self.second_thread_ids.append(thread_id)
                     self.company_state = SECOND_EMAIL_SENT
             else:
                 self.company_state = GOT_RESPONSE
         elif self.company_state == SECOND_EMAIL_SENT:
-            if self.should_send_followup_email(service):
+            if self.should_send_followup_email(service, self.second_thread_ids):
                 if self.did_enough_time_pass():
-                    thred_id = send_third_email(service, self.people)
-                    # TODO: what to do with thread id?
+                    thread_id = send_third_email(service, self.people)
+                    self.third_thread_ids.append(thread_id)
                     self.company_state = THIRD_EMAIL_SENT
             else:
                 self.company_state = GOT_RESPONSE
         elif self.company_state == THIRD_EMAIL_SENT:
-            if self.should_send_followup_email(service):
+            if self.should_send_followup_email(service, self.third_thread_ids):
                 self.company_state = NO_RESPONSE
             else:
                 self.company_state = GOT_RESPONSE
@@ -94,8 +97,8 @@ class CompanyState:
         return False
 
 
-    def should_send_followup_email(self, service):
-        for thread_id in self.thread_ids:
+    def should_send_followup_email(self, service, thread_ids):
+        for thread_id in thread_ids:
             if self.did_email_get_response(service, thread_id):
                 return False
         return True
@@ -105,7 +108,7 @@ class CompanyState:
         if len(thread['messages']) > 1:
             return True
         else:
-            return False    
+            return False
 
 class Person:
     def __init__(self, full_name, email):
@@ -195,11 +198,12 @@ def first_email_body(company, i):
     html = f.read().format(concatted_names)
 
     msg = MIMEMultipart()
+
     # msg['To'] = company[i].email
     # msg['From'] = IGORS_EMAIL
-    print "would be sending to: {}".format(company[i].email)
     msg['To'] = OLSHANSKY_EMAIL
     msg['From'] = OLSHANSKY_EMAIL
+    
     msg['Subject'] = "Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
 
@@ -226,15 +230,20 @@ def second_email_body(company):
     html = f.read().format(concatted_names)
 
     msg = MIMEMultipart()
+
     # msg['To'] = ', '.join(emails)
     # msg['From'] = IGORS_EMAIL
-    print "would be sending to: {}".format(', '.join(emails))
     msg['To'] = OLSHANSKY_EMAIL
     msg['From'] = OLSHANSKY_EMAIL
-    msg['Subject'] = "Re: Appropriate Person"
+    msg['References'] = 
+    msg['In-Reply-To'] =
+
+    msg['Subject'] = "Appropriate Person"
+    # msg['Subject'] = "Re: Appropriate Person"
+
     msg.attach(MIMEText(html, 'html'))
 
-    return {'raw': base64.urlsafe_b64encode(msg.as_string())}
+    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': threadId}
 
 def send_second_email(service, company):    
     body = second_email_body(company)    
@@ -246,19 +255,25 @@ def send_second_email(service, company):
 # ===========
 
 def third_email_body(company):
+    emails = [person.email for person in company]
+    
     f = open('templates/template3', 'r')
     html = f.read()
 
     msg = MIMEMultipart()
-    # msg['To'] = ???
+    # msg['To'] = ', '.join(emails)
     # msg['From'] = IGORS_EMAIL
     msg['To'] = OLSHANSKY_EMAIL
     msg['From'] = OLSHANSKY_EMAIL
-    msg['Subject'] = "Permission to Close Your File"
+    msg['References'] = 
+    msg['In-Reply-To'] = 
+    
+    msg['Subject'] = "Appropriate Person"
+    #msg['Subject'] = "Permission to Close Your File"
     
     msg.attach(MIMEText(html, 'html'))
 
-    return {'raw': base64.urlsafe_b64encode(msg.as_string())}        
+    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': threadId}        
 
 def send_third_email(service, company):
     pass
