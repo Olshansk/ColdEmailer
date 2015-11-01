@@ -29,7 +29,6 @@ class EmailSender:
     try:
       message = (service.users().messages().send(userId="me", body=body).execute())
       print('Message Id: %s' % message['id'])
-      print('Thread Id: %s' % message['threadId'])
       return message
     except Exception as error:
       print('An error occurred: %s' % error)
