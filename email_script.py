@@ -2,6 +2,8 @@
 # https://console.developers.google.com/project/igors-emails-1087
 # https://developers.google.com/apis-explorer/?hl=en_US#p/gmail/v1/
 
+import getopt
+import sys
 import httplib2
 import os
 from apiclient import discovery
@@ -42,6 +44,7 @@ SECONDS_ONE_DAY = SECONDS_ONE_HOUR * 24
 SECONDS_ONE_WEEK = SECONDS_ONE_DAY * 7
 SECONDS_ONE_MONTH = SECONDS_ONE_WEEK * 4
 
+DEBUG = True
 
 # Data structures
 # ===============
@@ -80,6 +83,9 @@ class CompanyState:
                 self.company_state = GOT_RESPONSE
 
     def did_enough_time_pass(self):
+        if DEBUG:
+            return True
+
         if self.company_state == NO_EMAIL:
             self.last_updated = time.time()
             return True
@@ -172,7 +178,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def slice_list_at_index(l, i):
+def list_with_elem_at_index_i_removed(l, i):
     return l[:i] + l[i+1:]
 
 def concat_names(names):
@@ -186,18 +192,19 @@ def concat_names(names):
 # First Email
 # ===========
 
-def first_email_body(company, i):
-    people = slice_list_at_index(company, i)
-    names = [person.full_name for person in people]
+def first_email_body(people, i):
+    # Note, the call immidiately below assumes there's > 1 person in a company
+    people_mentioned = list_with_elem_at_index_i_removed(people, i)
+    names = [person.full_name for person in people_mentioned]
     concatted_names = concat_names(names)
 
     f = open('templates/template1', 'r')
     html = f.read().format(concatted_names)
 
     msg = MIMEMultipart()
-    # msg['To'] = company[i].email
+    # msg['To'] = people[i].email
     # msg['From'] = IGORS_EMAIL
-    print "would be sending to: {}".format(company[i].email)
+    print "would be sending to: {}".format(people[i].email)
     msg['To'] = OLSHANSKY_EMAIL
     msg['From'] = OLSHANSKY_EMAIL
     msg['Subject'] = "Appropriate Person"
@@ -205,10 +212,10 @@ def first_email_body(company, i):
 
     return {'raw': base64.urlsafe_b64encode(msg.as_string())}
 
-def send_first_email(service, company):
+def send_first_email(service, people):
     thread_ids = []
-    for i in range(len(company)):
-        body = first_email_body(company, i)
+    for i in range(len(people)):
+        body = first_email_body(people, i)
         message = send_email(service, body)
         thread_id = message['threadId']
         thread_ids.append(thread_id)
@@ -284,6 +291,7 @@ def send_email(service, body):
 # ====
 
 def main():
+    # Setup authentication with gmail
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
