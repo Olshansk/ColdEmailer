@@ -41,7 +41,7 @@ class Company:
   def handle_first_email_sent(self, service):
     if not self.did_get_response(service):
       if self.did_enough_time_pass():
-        thread_id = self.email_sender.send_second_email(service, self.people)
+        thread_id = self.email_sender.send_second_email(service, self.people, self.thread_ids[0])
         self.thread_ids.append(thread_id)
         self.company_state = SECOND_EMAIL_SENT
     else:

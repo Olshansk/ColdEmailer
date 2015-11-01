@@ -27,9 +27,9 @@ class EmailComposer:
 
     return {'raw': base64.urlsafe_b64encode(msg.as_string())}
 
-  def second_email_body(self, company):
-    emails = [person.email for person in company] 
-    names = [person.first_name for person in company]
+  def second_email_body(self, people, thread_id):
+    emails = [person.email for person in people]
+    names = [person.first_name for person in people]
     concatted_names = self.concat_names(names)
 
     f = open('templates/template2', 'r')
@@ -44,9 +44,10 @@ class EmailComposer:
     msg['Subject'] = "Re: Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
 
-    return {'raw': base64.urlsafe_b64encode(msg.as_string())}
+    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': thread_id}
 
-  def third_email_body(self, company):
+  # TODO
+  def third_email_body(self, people, thread_id):
       f = open('templates/template3', 'r')
       html = f.read()
 

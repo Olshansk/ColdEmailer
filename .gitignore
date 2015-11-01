@@ -3,3 +3,4 @@ new_companies
 old_companies
 *.pickle
 client_secret.json
+*.pyc
