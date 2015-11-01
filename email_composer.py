@@ -17,11 +17,9 @@ class EmailComposer:
     html = f.read().format(concatted_names)
 
     msg = MIMEMultipart()
-    # msg['To'] = people[i].email
-    # msg['From'] = IGORS_EMAIL
-    print "would be sending to: {}".format(people[i].email)
-    msg['To'] = OLSHANSKY_EMAIL
+    msg['To'] = people[i].email
     msg['From'] = OLSHANSKY_EMAIL
+    # msg['From'] = IGORS_EMAIL
     msg['Subject'] = "Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
 
@@ -36,31 +34,30 @@ class EmailComposer:
     html = f.read().format(concatted_names)
 
     msg = MIMEMultipart()
-    # msg['To'] = ', '.join(emails)
-    # msg['From'] = IGORS_EMAIL
-    print "would be sending to: {}".format(', '.join(emails))
-    msg['To'] = OLSHANSKY_EMAIL
+    msg['To'] = ', '.join(emails)
     msg['From'] = OLSHANSKY_EMAIL
+    # msg['From'] = IGORS_EMAIL
     msg['Subject'] = "Re: Appropriate Person"
+    msg['threadId'] = "1235465asdasdasdas"
     msg.attach(MIMEText(html, 'html'))
 
     return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': thread_id}
 
-  # TODO
   def third_email_body(self, people, thread_id):
-      f = open('templates/template3', 'r')
-      html = f.read()
+    emails = [person.email for person in people]
+    name = people[0].first_name # TODO: make sure you use the right person's name here
 
-      msg = MIMEMultipart()
-      # msg['To'] = ???
-      # msg['From'] = IGORS_EMAIL
-      msg['To'] = OLSHANSKY_EMAIL
-      msg['From'] = OLSHANSKY_EMAIL
-      msg['Subject'] = "Permission to Close Your File"
-      
-      msg.attach(MIMEText(html, 'html'))
+    f = open('templates/template3', 'r')
+    html = f.read().format(name)
 
-      return {'raw': base64.urlsafe_b64encode(msg.as_string())}
+    msg = MIMEMultipart()
+    msg['To'] = ', '.join(emails)
+    msg['From'] = OLSHANSKY_EMAIL
+    # msg['From'] = IGORS_EMAIL
+    msg['Subject'] = "Permission to Close Your File"    
+    msg.attach(MIMEText(html, 'html'))
+
+    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': thread_id}
 
   @staticmethod
   def concat_names(names):

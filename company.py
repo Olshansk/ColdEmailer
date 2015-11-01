@@ -41,26 +41,25 @@ class Company:
   def handle_first_email_sent(self, service):
     if not self.did_get_response(service):
       if self.did_enough_time_pass():
-        thread_id = self.email_sender.send_second_email(service, self.people, self.thread_ids[0])
+        thread_id = self.email_sender.send_second_email(service, self.people, self.thread_ids[-1])
         self.thread_ids.append(thread_id)
         self.company_state = SECOND_EMAIL_SENT
     else:
       self.company_state = GOT_RESPONSE
 
-  # TODO
   def handle_second_email_sent(self, service):
-    if not self.did_get_response(service):
+    if True: #not self.did_get_response(service):
       if self.did_enough_time_pass():
-        thred_id = self.email_sender.send_third_email(service, self.people)
-        # TODO: what to do with thread id?
+        thread_id = self.email_sender.send_third_email(service, self.people, self.thread_ids[-1])
+        self.thread_ids.append(thread_id)
         self.company_state = THIRD_EMAIL_SENT
     else:
       self.company_state = GOT_RESPONSE
 
-  # TODO
   def handle_third_email_sent(self, service):
     if not self.did_get_response(service):
-      self.company_state = NO_RESPONSE
+      if self.did_enough_time_pass():
+        self.company_state = NO_RESPONSE
     else:
       self.company_state = GOT_RESPONSE
 
@@ -76,6 +75,10 @@ class Company:
         self.last_updated = time.time()
         return True
     elif self.company_state == SECOND_EMAIL_SENT:
+      if time.time() - self.last_updated > SECONDS_ONE_MONTH:
+        self.last_updated = time.time()
+        return True
+    elif self.company_state == THIRD_EMAIL_SENT:
       if time.time() - self.last_updated > SECONDS_ONE_MONTH:
         self.last_updated = time.time()
         return True
