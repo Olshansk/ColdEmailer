@@ -44,31 +44,6 @@ def main():
   http = credentials.authorize(httplib2.Http())
   service = discovery.build('gmail', 'v1', http=http)
 
-  # thread = service.users().threads().get(userId="me", id="150c44c0a29b5aa3").execute()
-  
-  # pp = pprint.PrettyPrinter()
-  # pp.pprint(thread['messages'])
-  # pp.pprint("On {}".format()
-
-  # html = create_text_to_append("", thread['messages'])
-  
-  
-
-  # msg = MIMEMultipart()
-  # msg['To'] = "olshansky.daniel@gmail.com"
-  # msg['From'] = "olshansky.daniel@gmail.com"
-  # msg['Subject'] = "Test"
-  # msg.attach(MIMEText(html, 'html'))
-  # body = {'raw': base64.urlsafe_b64encode(msg.as_string())}
-  # try:
-  #   message = (service.users().messages().send(userId="me", body=body).execute())
-  #   print('Message Id: %s' % message['id'])
-  # except Exception as error:
-  #   print('An error occurred: %s' % error)
-  #   return {}
-
-  # Keep stuff below here
-
   company_io = CompanyIO()
 
   existing_companies = company_io.load_companies()
