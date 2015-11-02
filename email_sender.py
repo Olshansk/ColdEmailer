@@ -15,12 +15,14 @@ class EmailSender:
     return thread_ids
 
   def send_second_email(self, service, people, thread_id):
-    body = self.email_composer.second_email_body(people, thread_id)    
+    thread = service.users().threads().get(userId="me", id=thread_id).execute()
+    body = self.email_composer.second_email_body(people, thread_id, thread)    
     message = self.send_email(service, body)
     return message['threadId']
 
   def send_third_email(self, service, people, thread_id):
-    body = self.email_composer.third_email_body(people, thread_id)
+    thread = service.users().threads().get(userId="me", id=thread_id).execute()
+    body = self.email_composer.third_email_body(people, thread_id, thread)
     message = self.send_email(service, body)
     return message['threadId']
 
