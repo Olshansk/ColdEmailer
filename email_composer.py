@@ -45,7 +45,7 @@ class EmailComposer:
     msg['Subject'] = "Re: Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
 
-    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': thread_id}
+    return {'raw': base64.urlsafe_b64encode(msg.as_string())}
 
   def third_email_body(self, people, thread_id, thread):
     emails = [person.email for person in people]
@@ -62,7 +62,7 @@ class EmailComposer:
     msg['Subject'] = "Permission to Close Your File"    
     msg.attach(MIMEText(html, 'html'))
 
-    return {'raw': base64.urlsafe_b64encode(msg.as_string()), 'threadId': thread_id}
+    return {'raw': base64.urlsafe_b64encode(msg.as_string())}
 
   # I did not realize that the last message will have everything prior already quoted,
   # so in the meantiome, you have to alle this method as so: self.get_quoted_text([thread['messages'][-1]])
@@ -121,11 +121,11 @@ class EmailComposer:
   @staticmethod
   def concat_names(names):
     if len(names) == 1:
-        return names[0]
+      return names[0]
     elif len(names) == 2:
-        return "{} and {}".format(names[0], names[1])
+      return "{} and {}".format(names[0], names[1])
     else:
-        return "{} and {}".format(', '.join(names[0:-1]), names[-1])
+      return "{} and {}".format(', '.join(names[0:-1]), names[-1])
 
   # Note, call to this method assumes list size is > 1
   @staticmethod
