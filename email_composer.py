@@ -23,6 +23,7 @@ class EmailComposer:
     msg = MIMEMultipart()
     msg['To'] = people[i].email
     msg['From'] = OLSHANSKY_EMAIL
+    # TODO
     # msg['From'] = IGORS_EMAIL
     msg['Subject'] = "Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
@@ -41,6 +42,7 @@ class EmailComposer:
     msg = MIMEMultipart()
     msg['To'] = ', '.join(emails)
     msg['From'] = OLSHANSKY_EMAIL
+    # TODO
     # msg['From'] = IGORS_EMAIL
     msg['Subject'] = "Re: Appropriate Person"
     msg.attach(MIMEText(html, 'html'))
@@ -58,6 +60,7 @@ class EmailComposer:
     msg = MIMEMultipart()
     msg['To'] = ', '.join(emails)
     msg['From'] = OLSHANSKY_EMAIL
+    # TODO
     # msg['From'] = IGORS_EMAIL
     msg['Subject'] = "Permission to Close Your File"    
     msg.attach(MIMEText(html, 'html'))
